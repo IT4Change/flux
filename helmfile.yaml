@@ -1,0 +1,23 @@
+---
+environments:
+  default:
+    values:
+      - ./environments/default.yaml.gotmpl
+  production:
+    values:
+      - ./environments/production.yaml.gotmpl
+---
+repositories:
+  - name: fluxcd-community
+    url: https://fluxcd-community.github.io/helm-charts
+
+releases:
+  - name: flux
+    namespace: flux-system
+    createNamespace: true
+    chart: fluxcd-community/flux2
+    # Pinned: a chart upgrade changes the controllers and their CRDs, so it is a deliberate step,
+    # not something the next `apply` picks up on its own.
+    version: 2.19.1
+    values:
+    - ./values/flux.yaml.gotmpl

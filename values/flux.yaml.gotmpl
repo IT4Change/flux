@@ -1,0 +1,31 @@
+# flux2 chart values (fluxcd-community/helm-charts). Only what differs from the chart's defaults.
+
+crds:
+  annotations:
+    # Uninstalling the release must not take the CRDs with it: deleting a CRD deletes every resource
+    # of that kind in the cluster, i.e. every GitRepository, HelmRelease, ImagePolicy, … that the
+    # deployments put there.
+    helm.sh/resource-policy: keep
+
+# The controllers the deployments need:
+#   source / helm / kustomize  — Git and Helm sources, HelmRelease, Kustomization
+#   notification               — Receiver (webhook "reconcile now") and alerts
+#   image-reflector / -automation — which image tag is the newest by a deployment's rollout rule
+# All of them are on by default in this chart; listed here so the set is visible and deliberate.
+sourceController:
+  create: true
+helmController:
+  create: true
+kustomizeController:
+  create: true
+notificationController:
+  create: true
+  webhookReceiver:
+    ingress:
+      # Off until the webhook receiver is set up (domain, TLS issuer, Receiver + token): an ingress
+      # without a Receiver behind it only answers 404.
+      create: false
+imageReflectionController:
+  create: true
+imageAutomationController:
+  create: true
