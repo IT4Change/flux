@@ -43,8 +43,8 @@ For Flux to decrypt a deployment's Secrets, add the cluster's public key to that
 
 | Environment | Cluster | Public key |
 | --- | --- | --- |
-| `default` | staging | `age15u383v4qunw5j9am300shdkse0q436shc3fysan65dfu43jh740q63hvuh` |
-| `production` | production | `age15zt3gx4us3rzcpg0zqw72ksrc8due9lex2vhgvgjsrpfam2vhepswdkcm3` |
+| `default` | staging | `age1nu7ls2fj54f7zmlj329zfx3smv098tz7y6shl9r0yxz5fl83243qv44mra` |
+| `production` | production | `age19crepcun9rw5yrskfzu2gwlcrdn7egwz9skl9qk9g6s0an8ehsesns59f6` |
 
 A new key for a cluster:
 
