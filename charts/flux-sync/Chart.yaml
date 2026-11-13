@@ -1,0 +1,5 @@
+apiVersion: v2
+name: flux-sync
+description: What makes Flux follow this repo, and the TLS issuer of its webhook receiver.
+type: application
+version: 1.0.0

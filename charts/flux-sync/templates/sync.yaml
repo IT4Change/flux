@@ -1,0 +1,30 @@
+# Flux follows this repo: everything under clusters/<cluster>/ is applied, and each entry there
+# points Flux at a deployment's own repo. A new deployment is a commit here; nothing is applied by
+# hand. Public repo, so no credentials.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: flux
+  namespace: {{ .Release.Namespace }}
+spec:
+  interval: 1m
+  url: {{ .Values.repository }}
+  ref:
+    branch: master
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cluster
+  namespace: {{ .Release.Namespace }}
+spec:
+  interval: 10m
+  sourceRef:
+    kind: GitRepository
+    name: flux
+  path: ./clusters/{{ required "cluster is required" .Values.cluster }}
+  prune: true
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age

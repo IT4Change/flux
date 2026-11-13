@@ -1,0 +1,7 @@
+# What Flux runs on the staging cluster: one entry per deployment. Applied by the Kustomization
+# `cluster` (charts/flux-sync), which this repo installs.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - paxfamily-social.yaml
+  - paxfamily-social-deploy-key.sops.yaml

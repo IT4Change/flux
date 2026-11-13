@@ -1,0 +1,4 @@
+cluster: {{ .StateValues.cluster }}
+webhook:
+  domain: {{ .StateValues.webhook.DOMAIN | quote }}
+acmeEmail: {{ .StateValues | get "acme.EMAIL" "" | quote }}

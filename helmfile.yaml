@@ -25,3 +25,14 @@ releases:
     version: 2.20.0
     values:
     - ./values/flux.yaml.gotmpl
+
+  # What Flux follows (clusters/<cluster>/ of this repo) and the issuer of its webhook ingress. A
+  # release of its own, after the controllers: its objects are kinds the first release brings, and
+  # helm cannot install an object whose CRD it is installing in the same release.
+  - name: flux-sync
+    namespace: flux-system
+    chart: ./charts/flux-sync
+    needs:
+      - flux-system/flux
+    values:
+    - ./values/flux-sync.yaml.gotmpl

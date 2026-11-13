@@ -4,8 +4,9 @@
 [community Helm chart](https://github.com/fluxcd-community/helm-charts) — the same layout as
 [IT4Change/prometheus](https://github.com/IT4Change/prometheus).
 
-This repo installs the Flux **controllers** only. What Flux deploys (GitRepository, HelmRelease,
-ImagePolicy, Receiver, …) lives in the repos of the deployments, not here.
+This repo installs the Flux controllers and says **which deployments a cluster runs**
+(`clusters/<cluster>/`). What a deployment consists of (HelmRelease, ImagePolicy, Receiver, …) lives
+in that deployment's own repo.
 
 ## Why
 
@@ -58,7 +59,32 @@ printf "sops_age:\n    AGE_KEY: %s\n" $secret \
 set -e secret
 ```
 
-## Not yet here
+## Deployments
 
-- **Webhook receiver ingress** (`values/flux.yaml.gotmpl`, `notificationController.webhookReceiver`):
-  needs the domain and TLS issuer of the cluster.
+The release `flux-sync` (`charts/flux-sync`) makes Flux follow this repo: everything under
+`clusters/staging/` (environment `default`) or `clusters/production/` is applied by Flux. Each
+deployment has one file there, a GitRepository on its repo plus a Kustomization on its folder:
+
+| Cluster | Deployment | Repo, folder |
+| --- | --- | --- |
+| staging | paxfamily.social | `IT4Change/paxfamily.social`, `flux/staging/` |
+
+A new deployment is a commit here, nothing is applied by hand. Secrets in `clusters/<cluster>/` are
+named `*.sops.yaml` and are encrypted to the team and to that cluster's key (`.sops.yaml`).
+
+A deployment whose Flux commits the rolled-out image tag back (ImageUpdateAutomation) needs a deploy
+key with write access on its repo; its private half is a Secret here, e.g.
+`clusters/staging/paxfamily-social-deploy-key.sops.yaml`.
+
+## Webhook receiver
+
+GitHub tells Flux "check now" at `https://<webhook.DOMAIN>/hook/<path of the Receiver>`
+(`environments/<env>.yaml.gotmpl`; staging: `deploy.it4c.org`). The DNS name has to point at the
+cluster's ingress. The certificate comes from Let's Encrypt (`charts/flux-sync/templates/issuer.yaml`)
+and needs an ACME e-mail address in `environments/<env>.secrets.yaml`:
+
+```fish
+sops set environments/default.secrets.yaml '["acme"]["EMAIL"]' '"you@example.org"'
+```
+
+Without `webhook.DOMAIN` there is no ingress, and Flux finds changes by polling.

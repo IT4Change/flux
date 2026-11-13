@@ -22,9 +22,25 @@ notificationController:
   create: true
   webhookReceiver:
     ingress:
-      # Off until the webhook receiver is set up (domain, TLS issuer, Receiver + token): an ingress
-      # without a Receiver behind it only answers 404.
+{{- if .StateValues.webhook.DOMAIN }}
+      # The receivers' endpoint for GitHub (one host, every Receiver has its own path). TLS from
+      # the issuer in charts/flux-sync.
+      create: true
+      annotations:
+        cert-manager.io/issuer: flux-letsencrypt-prod
+      hosts:
+        - host: {{ .StateValues.webhook.DOMAIN }}
+          paths:
+            - path: /hook/
+              pathType: Prefix
+      tls:
+        - secretName: flux-webhook-tls
+          hosts:
+            - {{ .StateValues.webhook.DOMAIN }}
+{{- else }}
+      # No domain for this cluster: no ingress, Flux polls.
       create: false
+{{- end }}
 imageReflectionController:
   create: true
 imageAutomationController:

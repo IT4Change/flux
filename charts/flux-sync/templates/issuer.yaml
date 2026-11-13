@@ -1,0 +1,19 @@
+{{- if .Values.webhook.domain }}
+# The TLS certificate of the webhook receiver's ingress (values/flux.yaml.gotmpl), the same way the
+# ocelot.social chart issues its own: Let's Encrypt, HTTP-01 through traefik.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: flux-letsencrypt-prod
+  namespace: {{ .Release.Namespace }}
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: {{ required "acme email is required for the webhook ingress" .Values.acmeEmail | quote }}
+    privateKeySecretRef:
+      name: flux-letsencrypt-prod
+    solvers:
+      - http01:
+          ingress:
+            class: traefik
+{{- end }}

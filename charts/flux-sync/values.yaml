@@ -1,0 +1,6 @@
+repository: https://github.com/IT4Change/flux
+# staging | production: the folder under clusters/ this cluster runs.
+cluster: ""
+webhook:
+  domain: ""
+acmeEmail: ""
