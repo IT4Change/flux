@@ -29,3 +29,18 @@ imageReflectionController:
   create: true
 imageAutomationController:
   create: true
+
+# The cluster's own age key, for the deployments' sops-encrypted Secrets: a Kustomization with
+# `decryption: { provider: sops, secretRef: { name: sops-age } }` decrypts with it. One key per
+# cluster (environments/<env>.secrets.yaml, encrypted to the team's keys in .sops.yaml), so staging
+# cannot read what is encrypted for production only. The public keys are listed in the README.
+extraObjects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: sops-age
+      namespace: flux-system
+    type: Opaque
+    stringData:
+      # Flux reads every key ending in `.agekey` as an age identity.
+      age.agekey: {{ .StateValues.sops_age.AGE_KEY | quote }}
