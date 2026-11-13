@@ -1,0 +1,23 @@
+{{- if .Values.webhook.domain }}
+# The flux2 chart locks flux-system down (NetworkPolicy allow-egress: ingress only from pods of the
+# same namespace). cert-manager's HTTP-01 solver for the webhook certificate runs here too, and
+# Let's Encrypt reaches it through traefik in another namespace — without this, the challenge never
+# gets an answer and traefik keeps serving its default certificate.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-acme-http01-solver
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      acme.cert-manager.io/http01-solver: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - port: 8089
+          protocol: TCP
+{{- end }}
