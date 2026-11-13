@@ -72,9 +72,8 @@ deployment has one file there, a GitRepository on its repo plus a Kustomization 
 A new deployment is a commit here, nothing is applied by hand. Secrets in `clusters/<cluster>/` are
 named `*.sops.yaml` and are encrypted to the team and to that cluster's key (`.sops.yaml`).
 
-A deployment whose Flux commits the rolled-out image tag back (ImageUpdateAutomation) needs a deploy
-key with write access on its repo; its private half is a Secret here, e.g.
-`clusters/staging/paxfamily-social-deploy-key.sops.yaml`.
+The cluster holds no credential for GitHub: the deployments' repos are public, and Flux only reads
+them. Which image runs is written into the repo by the repo's own build workflow.
 
 ## Webhook receiver
 

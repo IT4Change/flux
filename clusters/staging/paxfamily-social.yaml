@@ -1,8 +1,7 @@
 # paxfamily.social, staging: the deployment's own manifests in its repo (flux/staging/).
 #
-# Over SSH with a deploy key that may write: Flux commits the image tag it rolls out back to the
-# repo (flux/staging/images.yaml, ImageUpdateAutomation). The key is on the repo as a deploy key
-# with write access, its private half in paxfamily-social-deploy-key.sops.yaml.
+# Read only, over HTTPS, without credentials: the repo is public. Flux writes nothing back — the
+# repo's own workflow commits the image tag it built (publish.yml, roll-out-staging).
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
@@ -10,11 +9,9 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m
-  url: ssh://git@github.com/IT4Change/paxfamily.social
+  url: https://github.com/IT4Change/paxfamily.social
   ref:
     branch: master
-  secretRef:
-    name: paxfamily-social-deploy-key
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
