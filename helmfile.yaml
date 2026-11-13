@@ -18,6 +18,6 @@ releases:
     chart: fluxcd-community/flux2
     # Pinned: a chart upgrade changes the controllers and their CRDs, so it is a deliberate step,
     # not something the next `apply` picks up on its own.
-    version: 2.19.1
+    version: 2.20.0
     values:
     - ./values/flux.yaml.gotmpl
